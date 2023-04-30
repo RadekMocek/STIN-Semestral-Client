@@ -1,4 +1,8 @@
 :root {
+    --gray: #e4e4e4;
+    --grayDark: #c0c0c0;
+    --blue: #646cff;
+
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
@@ -25,7 +29,7 @@ a:hover {
 
 body {
     margin: 0;
-    display: flex;    
+    display: flex;
     min-width: 320px;
     min-height: 100vh;
 }
@@ -43,7 +47,6 @@ h1 {
     max-width: 1280px;
     margin: 0 auto;
     padding: 2rem;
-    text-align: center;
 }
 
 button {
@@ -53,17 +56,35 @@ button {
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #ccd6dd;
+    background-color: var(--gray);
     cursor: pointer;
     transition: border-color 0.25s;
 }
 button:hover {
-    border-color: #646cff;
+    border-color: var(--blue);
 }
 button:focus,
 button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
 }
 button:active {
-    background-color: #aab8c2;
+    background-color: var(--grayDark);
+}
+button:disabled {
+    pointer-events: none;
+    background-color: var(--grayDark);
+}
+
+input[type="text"],
+input[type="password"] {
+    min-width: 100%;
+    padding: 6px 10px;
+    margin: 4px 0;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    background-color: var(--gray);
+}
+input[type="text"]:hover,
+input[type="password"]:hover {
+    border: 2px solid var(--blue);
 }
