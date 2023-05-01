@@ -40,10 +40,14 @@
                 userAccouts = response.data;
             })
             .catch((error) => {
-                let responseMessage = error.response.data.message;
-                if (responseMessage === "Neplatný token.") {
-                    errorMessage = "Platnost vašeho přihlášení vypršela. Přihlaště se prosím znovu.";
-                    Logout();
+                if (error.response) {
+                    let responseMessage = error.response.data.message;
+                    if (responseMessage === "Neplatný token.") {
+                        errorMessage = "Platnost vašeho přihlášení vypršela. Přihlaště se prosím znovu.";
+                        Logout();
+                    }
+                } else {
+                    errorMessage = error;
                 }
             })
             .then(() => {

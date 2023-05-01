@@ -37,7 +37,12 @@
                 successfulLogin = true;
             })
             .catch((error) => {
-                errorMessage = error.response.data.message;
+                if (error.response) {
+                    errorMessage = error.response.data.message;
+                }
+                else {
+                    errorMessage = error;                    
+                }
                 password = "";
             })
             .then(() => {
@@ -56,7 +61,12 @@
                 push("/")
             })
             .catch((error) => {
-                errorMessage = error.response.data.message;
+                if (error.response) {
+                    errorMessage = error.response.data.message;
+                }
+                else {
+                    errorMessage = error;                    
+                }
             })
             .then(() => {
                 loading = false;
