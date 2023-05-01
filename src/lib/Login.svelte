@@ -97,7 +97,7 @@
             <legend>Dvoufázové oveření</legend>
             <label for="twoFactorCode">Kód z e-mailu:</label>
             <br />
-            <input bind:value={twoFactorCode} type="text" id="twoFactorCode" name="twoFactorCode" />
+            <input bind:value={twoFactorCode} type="text" id="twoFactorCode" name="twoFactorCode" maxlength="16" />
             <br /><br />
             <button type="submit" disabled={!twoFactorCode}>Potvrdit</button>
             {#if loading}
@@ -116,12 +116,5 @@
         min-width: 350px;
         width: 25vw;
         padding: 1rem;
-    }
-
-    .error {
-        background-color: brown;
-        padding: 0.75rem 1.5rem;
-        color: white;
-        margin-bottom: 1rem;
-    }
+    }    
 </style>
