@@ -2,6 +2,7 @@
     import moneyMouthFace from "/money-mouth-face.png";
     import bank from "/bank.png";
     import LoadingWheel from "./LoadingWheel.svelte";
+    import Navbar from "./Navbar.svelte";
 
     import { push } from "svelte-spa-router";
     import { onMount } from "svelte";
@@ -43,7 +44,7 @@
                 if (error.response) {
                     let responseMessage = error.response.data.message;
                     if (responseMessage === "Neplatný token.") {
-                        errorMessage = "Platnost vašeho přihlášení vypršela. Přihlaště se prosím znovu.";
+                        errorMessage = "Platnost vašeho přihlášení vypršela. Přihlašte se prosím znovu.";
                         Logout();
                     }
                 } else {
@@ -57,12 +58,7 @@
 </script>
 
 {#if isTokenInStorage}
-    <nav>
-        <ul>
-            <li><h2>STIN Bank</h2></li>
-            <li><button on:click={Logout}>Odhlásit se</button></li>
-        </ul>
-    </nav>
+    <Navbar />
     {#if errorMessage}
         <div class="error">{errorMessage}</div>
     {/if}
@@ -71,10 +67,11 @@
         {#if loading}
             <LoadingWheel />
         {:else}
-            {#each userAccouts as { balance, currency, iban }}
-                <div class="account">
-                    <p>{iban}</p>
-                    <p>{balance} {currency}</p>
+            {#each userAccouts as { balance, currency, iban }}                
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <div class="accountBox" on:click={() => push(`/payment/history/${iban}`)}>
+                    <h4>{iban}</h4>
+                    <h3>{balance} {currency}</h3>
                 </div>
             {/each}
         {/if}
@@ -97,10 +94,6 @@
 {/if}
 
 <style>
-    #content {
-        text-align: center;
-    }
-
     .logo {
         height: 6em;
         padding: 1.5em;
@@ -111,12 +104,16 @@
         filter: drop-shadow(0 0 2em var(--blue));
     }
 
-    .account {
+    .accountBox {
         background-color: var(--grayDark);
-        padding: 1rem;
+        padding: 0.66rem 2rem;
         margin: 1rem auto;
         max-width: 640px;
         display: flex;
         justify-content: space-between;
+        cursor: pointer;
+    }
+    .accountBox:hover {
+        filter: drop-shadow(0 0 1em var(--grayDark));
     }
 </style>
