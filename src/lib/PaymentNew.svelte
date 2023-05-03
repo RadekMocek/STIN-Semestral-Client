@@ -191,8 +191,8 @@
                         <p class="error">Platba nebyla provedena:<br />{paymentErrorMessage}</p>
                     {/if}
                     {#if paymentSuccessMessage}
-                    <p class="success">
-                        {paymentSuccessMessage}
+                        <p class="success">
+                            {paymentSuccessMessage}
                             <a href={null} on:click={() => push(`/payment/history/${selectedAccount.iban}`)}>Přehled účtu.</a>
                         </p>
                     {/if}
@@ -232,5 +232,11 @@
     }
     .success a:hover {
         color: antiquewhite;
+    }
+
+    @media only screen and (max-width: 704px) {
+        fieldset {
+            max-width: fit-content;
+        }
     }
 </style>
