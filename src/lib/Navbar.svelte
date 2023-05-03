@@ -14,12 +14,23 @@
 
 <nav>
     <ul>
-        <li><h2>STIN Bank</h2></li>
-        <li><button on:click={Logout}>Odhlásit se</button></li>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <li><h2 on:click={() => push("/")}>STIN Bank</h2></li>
+        <li>
+            <button on:click={() => push("/")}>Moje účty</button>
+            &nbsp;
+            <button on:click={() => push("/payment/new")}>Zadat platbu</button>
+            &nbsp;
+            <button on:click={Logout}>Odhlásit se</button>
+        </li>
     </ul>
 </nav>
 
 <style>
+    h2 {
+        cursor: pointer;
+    }
+
     nav {
         background-color: var(--grayDark);
         width: 100vw;

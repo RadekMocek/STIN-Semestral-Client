@@ -67,11 +67,11 @@
         {#if loading}
             <LoadingWheel />
         {:else}
-            {#each userAccouts as { balance, currency, iban }}                
+            {#each userAccouts as { balance, currency, iban }}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <div class="accountBox" on:click={() => push(`/payment/history/${iban}`)}>
                     <h4>{iban}</h4>
-                    <h3>{balance} {currency}</h3>
+                    <h3>{balance} {currency}<!--<button on:click|stopPropagation={() => push(`/payment/new/${iban}`)}>💳</button>--></h3>
                 </div>
             {/each}
         {/if}
@@ -116,4 +116,10 @@
     .accountBox:hover {
         filter: drop-shadow(0 0 1em var(--grayDark));
     }
+    /*
+    .accountBox button {
+        padding: 0;
+        margin: 0 0 0 1rem;
+    }
+    */ 
 </style>
