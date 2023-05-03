@@ -1,12 +1,12 @@
 <script>
+    import { breakpoint } from "./MediaQuery.svelte";
     import { push, location as routerLocation } from "svelte-spa-router";
 
     const Logout = () => {
         localStorage.clear();
         if ($routerLocation === "/") {
             location.reload();
-        }
-        else {
+        } else {
             push("/");
         }
     };
@@ -15,13 +15,23 @@
 <nav>
     <ul>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <li><h2 on:click={() => push("/")}>STIN Bank</h2></li>
         <li>
-            <button on:click={() => push("/")}>Moje účty</button>
+            <h2 on:click={() => push("/")}>
+                {#if $breakpoint === "small"}STIN{:else}STIN Bank{/if}
+            </h2>
+        </li>
+        <li>
+            <button on:click={() => push("/")}
+                >{#if $breakpoint == "small"}<i class="fa fa-list"></i>{:else}Moje účty{/if}</button
+            >
             &nbsp;
-            <button on:click={() => push("/payment/new")}>Zadat platbu</button>
+            <button on:click={() => push("/payment/new")}
+                >{#if $breakpoint == "small"}<i class="fa fa-credit-card"></i>{:else}Zadat platbu{/if}</button
+            >
             &nbsp;
-            <button on:click={Logout}>Odhlásit se</button>
+            <button on:click={Logout}
+                >{#if $breakpoint == "small"}<i class="fa fa-sign-out"></i>{:else}Odhlásit se{/if}</button
+            >
         </li>
     </ul>
 </nav>

@@ -1,4 +1,5 @@
 <script>
+    import { breakpoint } from "./MediaQuery.svelte";
     import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
     import axios from "axios";
@@ -111,7 +112,9 @@
             <div class="paymentBox">
                 <p>
                     <b>{unixTimeToHumanTime(timestamp)}</b>
-                    <span>&nbsp;&emsp;{value > 0 ? "Příchozí platba" : "Odchozí platba"}</span>
+                    {#if $breakpoint !== "small"}
+                        <span>&nbsp;&emsp;{value > 0 ? "Příchozí platba" : "Odchozí platba"}</span>
+                    {/if}
                 </p>
                 <p><b>{value} {userAccount.currency}</b></p>
             </div>
