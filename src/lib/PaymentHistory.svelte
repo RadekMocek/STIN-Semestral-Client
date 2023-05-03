@@ -103,7 +103,7 @@
     {#if loading}
         <LoadingWheel />
     {:else}
-        <div class="accountBox">
+        <div class="accountBoxUnclikable">
             <h4>{userAccount.iban}</h4>
             <h3>{userAccount.balance} {userAccount.currency}</h3>
         </div>
@@ -120,15 +120,6 @@
 </div>
 
 <style>
-    .accountBox {
-        background-color: var(--grayDark);
-        padding: 0.33rem 2rem;
-        margin: 1rem auto;
-        max-width: 640px;
-        display: flex;
-        justify-content: space-between;
-    }
-
     .paymentBox {
         background-color: var(--gray);
         padding: 0 2rem;
