@@ -13,6 +13,9 @@
 
     $: converted = round6(amount * exchangeRates[selectedCurrency]);
     $: newBalance = round6(selectedAccount.balance + (hasAccountInSelectedCurrency ? amount : converted));
+    $: newCzkBalance = round6(czkAccount.balance + converted);
+    $: outgoingWithConversion = newBalance < 0 && selectedCurrency !== "CZK" && hasAccountInSelectedCurrency;
+    $: outgoingWithConversionValid = outgoingWithConversion && newCzkBalance >= 0;
 
     let exchangeRates = [];
     let userAccounts = [];
@@ -152,8 +155,11 @@
         <LoadingWheel />
     {:else}
         <div class="accountBoxUnclikable">
-            <h4>{selectedAccount.iban}</h4>
-            <h3>{selectedAccount.balance} {selectedAccount.currency}</h3>
+            <h4>{outgoingWithConversion ? czkAccount.iban : selectedAccount.iban}</h4>
+            <h3>
+                {outgoingWithConversion ? czkAccount.balance : selectedAccount.balance}
+                {outgoingWithConversion ? "CZK" : selectedAccount.currency}
+            </h3>
         </div>
         <form on:submit|preventDefault={PaySubmit}>
             <fieldset>
@@ -182,8 +188,21 @@
                     <p>Na účtu budete mít {newBalance} {selectedAccount.currency}.</p>
                     {#if newBalance < 0}
                         <p class="error">Nedostatek prostředků pro provedení platby.</p>
+                        {#if selectedCurrency !== "CZK" && hasAccountInSelectedCurrency}
+                            Platba bude provedena z CZK účtu budou použity kurzy z data <b>{exchangeRates._Date}</b>:
+                            <br />
+                            <code>{amount} {selectedCurrency} = {converted} CZK</code>
+                            <p>Na účtu budete mít {newCzkBalance} CZK.</p>
+                            {#if newCzkBalance < 0}
+                                <p class="error">Nedostatek prostředků pro provedení platby.</p>
+                            {/if}
+                        {/if}
                     {/if}
-                    <button type="submit" disabled={newBalance < 0 || paymentLoading || paymentEnd}>Provést platbu</button>
+                    {#if outgoingWithConversionValid}
+                        <button type="submit">Provést platbu</button>
+                    {:else}
+                        <button type="submit" disabled={newBalance < 0 || paymentLoading || paymentEnd}>Provést platbu</button>
+                    {/if}
                     {#if paymentLoading}
                         <LoadingWheel />
                     {/if}
@@ -193,7 +212,11 @@
                     {#if paymentSuccessMessage}
                         <p class="success">
                             {paymentSuccessMessage}
-                            <a href={null} on:click={() => push(`/payment/history/${selectedAccount.iban}`)}>Přehled účtu.</a>
+                            {#if outgoingWithConversionValid}
+                                <a href={null} on:click={() => push(`/payment/history/${czkAccount.iban}`)}>Přehled účtu.</a>
+                            {:else}
+                                <a href={null} on:click={() => push(`/payment/history/${selectedAccount.iban}`)}>Přehled účtu.</a>
+                            {/if}
                         </p>
                     {/if}
                 {/if}

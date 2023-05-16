@@ -71,9 +71,13 @@
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <div class="accountBox" on:click={() => push(`/payment/history/${iban}`)}>
                     <h4>{iban}</h4>
-                    <h3>{balance} {currency}<!--<button on:click|stopPropagation={() => push(`/payment/new/${iban}`)}>💳</button>--></h3>
+                    <h3>
+                        {balance}
+                        {currency}<!--<button on:click|stopPropagation={() => push(`/payment/new/${iban}`)}>💳</button>-->
+                    </h3>
                 </div>
             {/each}
+            <p><i>Kliknutím na jeden z účtů zobrazíte jeho historii plateb.</i></p>
         {/if}
     </div>
 {:else}
@@ -121,5 +125,5 @@
         padding: 0;
         margin: 0 0 0 1rem;
     }
-    */ 
+    */
 </style>
