@@ -13,9 +13,13 @@
 
     $: converted = round6(amount * exchangeRates[selectedCurrency]);
     $: newBalance = round6(selectedAccount.balance + (hasAccountInSelectedCurrency ? amount : converted));
+    $: overdraftAvailable =
+        amount < 0 &&
+        -(hasAccountInSelectedCurrency ? amount : converted) < round6(selectedAccount.balance + selectedAccount.balance * 0.1);
     $: newCzkBalance = round6(czkAccount.balance + converted);
-    $: outgoingWithConversion = newBalance < 0 && selectedCurrency !== "CZK" && hasAccountInSelectedCurrency;
-    $: outgoingWithConversionValid = outgoingWithConversion && newCzkBalance >= 0;
+    $: outgoingWithConversion = newBalance < 0 && amount < 0 && selectedCurrency !== "CZK" && hasAccountInSelectedCurrency;
+    $: outgoingWithConversionValid = outgoingWithConversion && newCzkBalance > -round6(czkAccount.balance * 0.1);
+    $: czkOverdraft = outgoingWithConversionValid && newCzkBalance < 0;
 
     let exchangeRates = [];
     let userAccounts = [];
@@ -155,10 +159,10 @@
         <LoadingWheel />
     {:else}
         <div class="accountBoxUnclikable">
-            <h4>{outgoingWithConversion ? czkAccount.iban : selectedAccount.iban}</h4>
+            <h4>{outgoingWithConversion && !overdraftAvailable ? czkAccount.iban : selectedAccount.iban}</h4>
             <h3>
-                {outgoingWithConversion ? czkAccount.balance : selectedAccount.balance}
-                {outgoingWithConversion ? "CZK" : selectedAccount.currency}
+                {outgoingWithConversion && !overdraftAvailable ? czkAccount.balance : selectedAccount.balance}
+                {outgoingWithConversion && !overdraftAvailable ? "CZK" : selectedAccount.currency}
             </h3>
         </div>
         <form on:submit|preventDefault={PaySubmit}>
@@ -186,22 +190,37 @@
                         </p>
                     {/if}
                     <p>Na účtu budete mít {newBalance} {selectedAccount.currency}.</p>
-                    {#if newBalance < 0}
-                        <p class="error">Nedostatek prostředků pro provedení platby.</p>
-                        {#if selectedCurrency !== "CZK" && hasAccountInSelectedCurrency}
-                            Platba bude provedena z CZK účtu budou použity kurzy z data <b>{exchangeRates._Date}</b>:
-                            <br />
-                            <code>{amount} {selectedCurrency} = {converted} CZK</code>
-                            <p>Na účtu budete mít {newCzkBalance} CZK.</p>
-                            {#if newCzkBalance < 0}
-                                <p class="error">Nedostatek prostředků pro provedení platby.</p>
+                    {#if newBalance < 0 && amount < 0}
+                        {#if overdraftAvailable}
+                            <p>
+                                Následně bude odečten jednorázový poplatek za kontokorent {round6(newBalance * 0.1)}
+                                {selectedAccount.currency}.
+                            </p>
+                        {:else}
+                            <p class="error">Nedostatek prostředků pro provedení platby.</p>
+                            {#if selectedCurrency !== "CZK" && hasAccountInSelectedCurrency}
+                                Platba bude provedena z CZK účtu budou použity kurzy z data <b>{exchangeRates._Date}</b>:
+                                <br />
+                                <code>{amount} {selectedCurrency} = {converted} CZK</code>
+                                <p>Na účtu budete mít {newCzkBalance} CZK.</p>
+                                {#if newCzkBalance < 0}
+                                    {#if czkOverdraft}
+                                        <p>
+                                            Následně bude odečten jednorázový poplatek za kontokorent {round6(newCzkBalance * 0.1)} CZK.
+                                        </p>
+                                    {:else}
+                                        <p class="error">Nedostatek prostředků pro provedení platby.</p>
+                                    {/if}
+                                {/if}
                             {/if}
                         {/if}
                     {/if}
-                    {#if outgoingWithConversionValid}
+                    {#if outgoingWithConversionValid || (overdraftAvailable && !paymentEnd)}
                         <button type="submit">Provést platbu</button>
                     {:else}
-                        <button type="submit" disabled={newBalance < 0 || paymentLoading || paymentEnd}>Provést platbu</button>
+                        <button type="submit" disabled={(newBalance < 0 && amount < 0) || paymentLoading || paymentEnd}
+                            >Provést platbu</button
+                        >
                     {/if}
                     {#if paymentLoading}
                         <LoadingWheel />
